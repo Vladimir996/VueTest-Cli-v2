@@ -1,0 +1,292 @@
+<template>
+  <div>
+    <div id="blog-green">
+        <p>BLOG</p>
+    </div>
+    <div class="container-blog">
+    <div class="filter-blog">
+      <a
+        @click.prevent="selectedCategory ='all'"
+        :class="{ activeClasss: selectedCategory == 'all' }"
+      >All /</a>
+      <a
+        @click.prevent="selectedCategory ='NATURE'"
+        :class="{ activeClasss: selectedCategory == 'NATURE' }"
+      >NATURE /</a>
+      <a
+        @click.prevent="selectedCategory = 'ART'"
+        :class="{ activeClasss: selectedCategory == 'ART' }"
+      >ART /</a>
+      <a
+        @click.prevent="selectedCategory = 'HISTORY'"
+        :class="{ activeClasss: selectedCategory == 'HISTORY' }"
+      >HISTORY /</a>
+      <a
+        @click.prevent="selectedCategory = 'TECHNOLOGY'"
+        :class="{ activeClasss: selectedCategory == 'TECHNOLOGY' }"
+      >TECHNOLOGY</a>
+      <div class="button-image">
+        <router-link
+        class="btn-post"
+        v-if="currentUser"
+        tag="button"
+        @click="newPost()"
+        to="/blog/newpost"
+        exact
+      >ADD NEW POST</router-link>
+      </div>
+    </div>
+      <div v-if="blogInfo">
+        <!-- <button @click="sort"><img class="sort-btn" src="https://img.icons8.com/color/48/000000/sorting-arrows.png"></button> -->
+        <div v-for="post in blogInfo" :key="post.id" class="z-hovr">
+          <button
+            type="button"
+            class="close"
+            v-if="currentUser"
+            aria-label="Close"
+            data-toggle="modal"
+            data-target="#deleteBlog"
+            @click="deletePost(post.id, post.title)"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <div class="post-list">
+            <router-link class="title-btn" :to="{ path: 'blog/singlepost/' + post.id}">
+              <h3>{{ post.title }}</h3>
+            </router-link>
+            <p class="category-blog">{{ post.category }}</p>
+            <div class="post-blog">
+              <router-link class="img-blog" :to="{ path: 'blog/singlepost/' + post.id}">
+             <img :src="post.url" class="img-blog" :to="{ path: 'blog/singlepost/' + post.id}">
+            </router-link>
+              <p v-html="post.text.substring(0,120)+'...'"></p>
+              <!-- <p> {{ post.text | truncate(100) }} </p> -->
+            </div>
+            <div class="formatDate">
+              <p>{{ formatDate(post.date) }}</p>
+            </div>
+            <div class="container">
+              <div class="btnn row d-flex justify-content-end">
+                <router-link
+                  class="edit-btn col-1"
+                  v-if="currentUser"
+                  tag="button"
+                  :to="{ path: 'blog/editpost/' + post.id}"
+                  exact
+                >EDIT</router-link>
+              </div>
+            </div>
+            <div id="line-blog"></div>
+          </div>
+        </div>
+      </div>
+      <p id="no-result" v-if="blogInfo.length == 0">No result.</p>
+      <button id="load-btn" @click="loadMore()">Load more</button>
+      <Prompt :title="blogTitle" :id="id"></Prompt>
+    </div>
+  </div>
+</template>
+<script>
+import db from "@/firebase/init";
+import { setTimeout } from "timers";
+import Prompt from "../components/shared/Prompt.vue";
+import moment from "moment";
+export default {
+  data() {
+    return {
+      blogTitle: "",
+      id: "",
+      selectedCategory: "all",
+    };
+  },
+  components: {
+    Prompt
+  },
+  computed: {
+    blogInfo() {
+      if (this.selectedCategory === "all") {
+      return this.$store.getters.blogInfo;
+      }
+      return this.$store.getters.blogInfo.filter(
+        blog => blog.category === this.selectedCategory
+      );
+    },
+    lastVisibleBlog() {
+       return this.$store.getters.getLastVisibleBlog;
+    },
+    user() {
+       return this.$store.getters.getUser !== null && this.$store.getters.getUser !== undefined;
+    },
+    currentUser() {
+      return this.$store.getters.currentUser;
+    }
+  },
+  created() {
+    this.$store.dispatch("getBlogs");
+  },
+  beforeDestroy() {
+    this.$store.commit('setEmtpyBlog');
+   },
+  methods: {
+    deletePost(id, title) {
+      this.id = id;
+      this.blogTitle = title;
+    },
+    formatDate(date) {
+      return moment(date).format("DD/MM/YYYY");
+    },
+    sort(){
+      this.$store.commit('setSort')
+      this.$store.dispatch('getBlogs')
+    },
+    loadMore() {
+      //  console.log(this.lastVisibleBlog)
+     db.collection("blog")
+      //  .orderBy('date', this.$store.state.sort)
+       .startAfter(this.lastVisibleBlog)
+       .limit(1)
+       .get()
+       .then(snapshot => {
+         var blogInfo = [];
+         var lastVisibleBlog = snapshot.docs[snapshot.docs.length - 1];
+         snapshot.forEach(doc => {
+           blogInfo.push({...doc.data(), id:doc.id});
+         });
+         this.$store.commit("setBlogInfo", blogInfo);
+         this.$store.commit("setLastVisibleBlog", lastVisibleBlog);
+       });
+  }
+  }
+}
+</script>
+
+<style>
+.container-blog {
+   width: 970px;
+  margin-left: 480px;
+  height: auto;
+}
+.btn-post {
+  width: 180px;
+  height: 40px;
+  background-color: #2ecc71;
+  color: white;
+  font-size: 21px;
+  font-weight: 600;
+  border: none;
+}
+.img-blog {
+  width: 350px;
+  height: 250px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+.post-list h3 {
+  font-size: 26px;
+  margin-top: 10px;
+  width: 950px;
+}
+.post-list p {
+  margin-left: 15px;
+  width: 565px;
+  height: 250px;
+  /* margin-top: 15px; */
+  /* overflow-y: scroll; 
+  overflow-x: hidden; */
+  /* overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; */
+}
+.post-blog {
+  display: inline;
+  display: flex;
+}
+#load-btn {
+  margin-left: 400px;
+  width: 180px;
+  height: 45px;
+  background-color: #2ecc71;
+  color: white;
+  font-size: 23px;
+  font-weight: 600;
+  border: none;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 7%;
+}
+.edit-btn {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  font-weight: 500;
+  margin-right: 7px;
+}
+.single-btn {
+  background-color: #2ecc71;
+  color: white;
+  border: none;
+  font-weight: 900;
+  font-size: 12px;
+  margin-right: 5px;
+}
+.close {
+  margin-right: 10px;
+}
+.close:hover {
+  color: red;
+}
+.title-btn {
+  text-decoration: none;
+  color: black;
+}
+.title-btn:hover {
+  text-decoration: none;
+  color: #2ecc71;
+}
+.formatDate p {
+  height: 18px;
+  margin-left: -2px;
+  margin-top: -10px;
+  margin-bottom: -5px;
+}
+.sort-btn {
+  width: 20px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+.sort-btn button {
+   color: red;
+}
+#line-blog {
+  width: 100%;
+}
+.button-image {
+  margin-left: 405px;
+  cursor: pointer;
+  padding-left: 20px;
+}
+.filter-blog {
+  display: flex;
+  list-style-type: none;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: #a5a4a4;
+  font-weight: 500;
+  font-size: 18px;
+}
+.activeClasss {
+  color: #2ecc71 !important;
+}
+.filter-blog a:hover {
+  color: #2ecc71 !important;
+  cursor: pointer;
+}
+.category-blog {
+  margin-bottom: -240px;
+  color: #2ecc71;
+  font-weight: 700;
+}
+</style>
