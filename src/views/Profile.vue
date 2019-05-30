@@ -4,13 +4,25 @@
            <p>PROFILE</p> 
         </div>
        <div class="container-profile">
-        <div class="new-postt">
+        <div v-if="currentUser" class="new-postt">
              <div><button class="btn btn-successs" @click="editProfile()">EDIT PROFILE</button></div> 
                  <h3  class="title-post" >{{ currentUser.username }}</h3>
-                 <div id="line-blog"></div>
+                 <div class="line-blog"></div>
                 <img class="url-post text-center" :src="currentUser.imgUrl">
+                <h3 class="biography-profile">Biography</h3>
                 <p class="text-post text-center" v-html="currentUser.biography"></p>
-                {{userPosts}}
+                <div class="line-blog"></div>
+                <div v-if="userPosts">
+                <!-- <router-link class="title-btn" :to="{ path: 'blog/singlepost/' + userPosts[0].id}"> -->
+                <!-- <h3>{{ userPosts[0].title }}</h3> -->
+                </router-link>
+            <div class="post-blog">
+               <!-- <router-link class="img-blog" :to="{ path: 'blog/singlepost/' +  userPosts[0].id}"> -->
+                 <!-- <img :src="userPosts[0].url" class="img-blog" :to="{ path: 'blog/singlepost/' +  userPosts[0].id}"> -->
+               </router-link>
+                <p v-html="userPosts[0].text.substring(0,700)+'...'"> </p>
+            </div>
+            </div>
         </div> 
    </div>
    </div>
@@ -47,7 +59,7 @@ editProfile() {
 
 <style>
 .container-profile {
-     width: 970px;
+  width: 970px;
   margin-left: 480px;
   height: auto;
 }
@@ -74,5 +86,9 @@ editProfile() {
     margin-bottom: 20px;
     background-color: #28a745;
     color: white;
+}
+.biography-profile {
+  margin-left: 415px;
+  color: #28a745;
 }
 </style>

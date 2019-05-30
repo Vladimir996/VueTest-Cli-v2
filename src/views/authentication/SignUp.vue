@@ -7,7 +7,7 @@
   <form @submit.prevent="signup" class="form">
     <div class="form-group">
     <label for="exampleInputEmail1">Username</label>
-    <input type="text" class="form-control"  aria-describedby="Text" placeholder="Username"  v-model="name">
+    <input type="text" class="form-control"  aria-describedby="Text" placeholder="Username"  v-model="username">
   </div>
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
@@ -36,13 +36,13 @@ export default {
         return {
             email: null,
             password: null,
-            name: '',
+            username: '',
         }
     },
      methods: {
         signUp() {
           this.$store.dispatch('createUser', {
-               name: this.name,
+               username: this.username,
                email: this.email,
                password: this.password,
            })

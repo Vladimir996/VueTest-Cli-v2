@@ -11,6 +11,17 @@
         <input class="ck-url" v-model="singlePost[0].url" type="text" placeholder="URL images">
         <p>Date</p>
         <datepicker v-model="date" name="uniquename" class="date-picker"></datepicker>
+         <p class="category">Category</p>
+        <select class="selectpicker" data-style="btn-info" v-model="category">
+          <option>NATURE</option>
+          <option>ART</option>
+          <option>HISTORY</option>
+          <option>TECHNOLOGY</option>
+        </select>
+         <div class="form-check">
+          <input class="form-check-input" type="checkbox" v-model="publish" value id="defaultCheck1">
+          <label class="form-check-label" for="defaultCheck1">Publish</label>
+        </div>
         <p class="text-edit">Text</p>
         <textarea name="ckeditor" id="ckeditor" v-model="singlePost[0].text"></textarea>
         <div class="all-btn">
@@ -40,7 +51,9 @@ export default {
       title: null,
       text: null,
       url: null,
-      date: null
+      date: Date.now(),
+      category: "",
+      publish: false
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -53,11 +66,8 @@ export default {
   mounted() {
     CKEDITOR.replace("ckeditor")
   },
-  // created() {
-  //   this.date = this.singlePost[0].date.toDate()
-  // },
   computed: {
-    singlePost() {
+  singlePost() {
       return this.$store.getters.singlePost;
     }
   },
@@ -66,6 +76,8 @@ export default {
   },
   methods: { 
     editPost() {
+       var date1 = moment(this.date).utc().startOf('day').format();
+       var date2 = (new Date(date1));
       const postText = CKEDITOR.instances.ckeditor.getData();
       this.$store
         .dispatch("updatePost", {
@@ -74,10 +86,9 @@ export default {
             title: this.singlePost[0].title,
             text: postText,
             url: this.singlePost[0].url,
-            date: moment(this.date)
-              .utc()
-              .startOf("day")
-              .format()
+            category: this.category,
+            published: this.publish,
+             date: date2,
           }
         })
         .then(this.$router.push("/blog"));

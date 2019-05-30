@@ -10,6 +10,7 @@ const state = {
     true: true,
     sort: 'asc',
     lastVisibleBlog: null,
+    noMorePosts: false,
 }
 const getters = {
     blogInfo: state => {
@@ -21,6 +22,9 @@ const getters = {
     getLastVisibleBlog: state => {
         return state.lastVisibleBlog;
     },
+    noMorePosts: state => {
+        return state.noMorePosts;
+    }
 }
 const mutations = {
     setBlogInfo(state, payload) {
@@ -46,6 +50,9 @@ const mutations = {
     },
     setEmtpyBlog(state) {
         state.blogInfo = []
+    },
+    setNoMorePosts(state, payload) {
+        state.noMorePosts = payload
     }
 }
 const actions = {
@@ -79,27 +86,14 @@ const actions = {
         text: payload.post.text,
         url: payload.post.url,
         date: payload.post.date,
+        category: payload.post.category,
+        published: payload.post.publish
      })
      .then(function() {
          dispatch('getBlogs')
      })
     commit('setTrue', false)
-},
-// emptyBlog({commit}, payload) {
-//     commit('setEmptyBlog', payload);
-// }
-// displayAll ({commit}) {
-//     db.collection("blog").limit(1).get().then(snapshot => {
-//         var blogInfo = [];
-//         var lastVisible = snapshot.docs[snapshot.docs.length-1];
-//         snapshot.forEach(doc => {
-//            blogInfo.push(doc.data())
-//         });
-//       commit('setBlogInfo', blogInfo);
-//       commit('setLastVisibleBlog', lastVisibleBlog);
-      
-//       });
-//     },
+}
 }
 export default {
     state,

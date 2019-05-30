@@ -3,6 +3,7 @@ import * as firebase from "firebase";
 const state = {
     projects: [],
     lastVisible: null,
+    noMoreWork: false,
 }
 const getters = {
     getProjects: state => {
@@ -10,8 +11,10 @@ const getters = {
       },
     getLastVisible: state => {
       return state.lastVisible;
-    }
-       
+    },
+    noMoreWork: state => {
+      return state.noMoreWork;
+    }      
 }
 const mutations = {
   setProjects(state, payload) {
@@ -22,7 +25,9 @@ const mutations = {
   setLastVisible(state, payload) {
     state.lastVisible = payload 
   },
-
+  setNoMoreWork(state, payload) {
+    state.noMoreWork = payload
+  }
 }
 const actions = {
   displayAll ({commit}) {

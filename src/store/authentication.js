@@ -16,15 +16,17 @@ const mutations = {
       }
 }
 const actions = {
-    async createUser( {commit}, {email, password, name} ) {
-       await firebase.auth().createUserWithEmailAndPassword(email, password).then(cred => {
+    async createUser( {commit}, payload) {
+       await firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password).then(cred => {
         db.collection("user").doc().set({
-            username: name,
+            username: payload.username,
             email: payload.email,
             id: cred.user.uid,
-        }).then(() => {
-            router.push({path: '/work'})
-            })
+        })
+        // .then(() => {
+        //     // console.log(state.currentUser)
+        //     router.push({path: '/work'})
+        //     })
     })
     .catch(error =>  {
         commit('setFeedback', error.message)

@@ -12,7 +12,7 @@
         <div class="formatSingle">
           <p>{{ formatDate(singlePost[0].date) }}</p>
         </div>
-        <div id="line-blog"></div>
+        <div class="line-blog"></div>
         <img class="urll-post" :src="singlePost[0].url">
         <p class="textt-post" v-html="singlePost[0].text"></p>
       </div>

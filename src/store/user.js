@@ -3,7 +3,11 @@ import * as firebase from "firebase";
 
 const state = {
     singleUser: null,
-    userPosts: []
+    userPosts: [{
+        title: '',
+        text:'',
+        url:''
+    }]
 }
 const getters = {
     singleUser(state) {

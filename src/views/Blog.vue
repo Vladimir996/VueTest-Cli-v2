@@ -37,7 +37,7 @@
       </div>
     </div>
       <div v-if="blogInfo">
-        <!-- <button @click="sort"><img class="sort-btn" src="https://img.icons8.com/color/48/000000/sorting-arrows.png"></button> -->
+        <button @click="sort"><img class="sort-btn" src="https://img.icons8.com/color/48/000000/sorting-arrows.png"></button>
         <div v-for="post in blogInfo" :key="post.id" class="z-hovr">
           <button
             type="button"
@@ -62,8 +62,15 @@
               <p v-html="post.text.substring(0,120)+'...'"></p>
               <!-- <p> {{ post.text | truncate(100) }} </p> -->
             </div>
+            <div class="date-published">
             <div class="formatDate">
-              <p>{{ formatDate(post.date) }}</p>
+              <!-- <p>{{ formatDate(post.date) }}</p> -->
+            <time :datetime="post.date">{{ post.date.toDate() | formatDate }}</time>
+            </div>
+            <div class="published-blog">
+               <p v-if="post.published == true">Published</p>
+                 <p  v-if="post.published == false">Unpublished</p>
+            </div>
             </div>
             <div class="container">
               <div class="btnn row d-flex justify-content-end">
@@ -76,12 +83,12 @@
                 >EDIT</router-link>
               </div>
             </div>
-            <div id="line-blog"></div>
+            <div class="line-blog"></div>
           </div>
         </div>
       </div>
       <p id="no-result" v-if="blogInfo.length == 0">No result.</p>
-      <button id="load-btn" @click="loadMore()">Load more</button>
+      <button id="load-btn" v-if="!noMorePosts" @click="loadMore()">Load more</button>
       <Prompt :title="blogTitle" :id="id"></Prompt>
     </div>
   </div>
@@ -102,6 +109,11 @@ export default {
   components: {
     Prompt
   },
+  filters: {
+    formatDate(date) {
+    return moment(date).format("DD/MM/YYYY");
+    }
+  },
   computed: {
     blogInfo() {
       if (this.selectedCategory === "all") {
@@ -119,7 +131,10 @@ export default {
     },
     currentUser() {
       return this.$store.getters.currentUser;
-    }
+    },
+    noMorePosts() {
+     return this.$store.getters.noMorePosts;
+    },
   },
   created() {
     this.$store.dispatch("getBlogs");
@@ -140,7 +155,6 @@ export default {
       this.$store.dispatch('getBlogs')
     },
     loadMore() {
-      //  console.log(this.lastVisibleBlog)
      db.collection("blog")
       //  .orderBy('date', this.$store.state.sort)
        .startAfter(this.lastVisibleBlog)
@@ -151,11 +165,14 @@ export default {
          var lastVisibleBlog = snapshot.docs[snapshot.docs.length - 1];
          snapshot.forEach(doc => {
            blogInfo.push({...doc.data(), id:doc.id});
-         });
+         })
+         if(snapshot.docs.length === 0) {
+             this.$store.commit('setNoMorePosts', true)
+         }
          this.$store.commit("setBlogInfo", blogInfo);
          this.$store.commit("setLastVisibleBlog", lastVisibleBlog);
        });
-  }
+    }
   }
 }
 </script>
@@ -244,10 +261,9 @@ export default {
   text-decoration: none;
   color: #2ecc71;
 }
-.formatDate p {
+.formatDate time {
   height: 18px;
-  margin-left: -2px;
-  margin-top: -10px;
+  margin-left: -2px; 
   margin-bottom: -5px;
 }
 .sort-btn {
@@ -287,6 +303,14 @@ export default {
 .category-blog {
   margin-bottom: -240px;
   color: #2ecc71;
+  font-weight: 700;
+}
+.date-published {
+  display: flex;
+}
+.published-blog {
+  margin-bottom: -270px;
+  color: #fa0000;
   font-weight: 700;
 }
 </style>

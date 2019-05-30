@@ -122,7 +122,7 @@ export default {
   margin-left: 480px;
   padding-top: 20px;
 }
-#line-blog {
+.line-blog {
   width: 960px;
   height: 2px;
   background-color: #2ecc71;

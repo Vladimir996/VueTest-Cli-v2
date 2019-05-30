@@ -5,9 +5,6 @@
     </div>
     <div class="container-data">
       <div class="new-post">
-        <p>First name:</p>
-        <input class="first-name" v-model="currentUser.username" type="text" placeholder="Firste name">
-        <br>
         <p>Profil photo:</p>
         <input
           class="img-profile"
@@ -29,29 +26,32 @@ import db from "@/firebase/init";
 export default {
   data() {
     return {
-      name: '',
       imgUrl: '',
       biography: '',
       id: '',
     };
   },
   computed: {
-    currentUser() {
-      return this.$store.getters.currentUser;
+    currentUser: {
+      get() { 
+          return this.$store.getters.currentUser;
+        },
+      set(newValue) {
+         this.$store.commit('setCurrentUser', newValue)
+        }
     }
   },
+
   methods: {
     profileInformation() {
-      db.collection("profile")
-        .add({
-          // id: this.$route.params.id,
-          // user_id: this.currentUser.id,
-          username: this.username,
-          imgUrl: this.imgUrl,
-          biography: this.biography,
+      console.log(this.imgUrl)
+      db.collection("user")
+        .doc(this.currentUser.id).update({
+          imgUrl: this.currentUser.imgUrl,
+          biography: this.currentUser.biography,
         })
         .then(() => {
-          this.$router.push({ path: "/profile" });
+          this.$router.push({ path: "/profile/" + this.currentUser.id  });
         });
     },
   }

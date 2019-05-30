@@ -44,7 +44,7 @@
       <p id="no-result" v-if="projects.length == 0">No result.</p>
     </div>
     <div>
-      <button id="load-button" @click="loadMore()">Load more</button>
+      <button id="load-button" v-if="!noMoreWork" @click="loadMore()">Load more</button>
     </div>
   </div>
 </template>
@@ -71,7 +71,10 @@ export default {
     },
     lastVisible() {
        return this.$store.getters.getLastVisible;
-    }
+    },
+     noMoreWork() {
+     return this.$store.getters.noMoreWork;
+    },
   },
   created() {
     // db.collection('work').get()
@@ -96,6 +99,9 @@ export default {
          snapshot.forEach(doc => {
            projects.push(doc.data());
          });
+         if(snapshot.docs.length === 0) {
+             this.$store.commit('setNoMoreWork', true)
+         }
          this.$store.commit("setProjects", projects);
          this.$store.commit("setLastVisible", lastVisible);
        });
