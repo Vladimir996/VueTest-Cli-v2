@@ -31,9 +31,10 @@ export default {
     props:  ['title', 'id'],
    methods: {
        confirm() {
+         db.collection("blog").doc(this.id).delete();   
+          this.$store.dispatch('loadMore'); 
            $('#deleteBlog').modal('hide');
-           db.collection("blog").doc(this.id).delete();
-            this.$store.dispatch('getBlogs');       
+           this.$router.push('/blog')   
        }
    }
 };

@@ -3,6 +3,7 @@
     <app-header></app-header>
     <vue-progress-bar></vue-progress-bar>
     <router-view/>
+    <!-- <router-view :key="$route.fullPath"></router-view> -->
     <app-footer></app-footer>
   </div>
 </template>

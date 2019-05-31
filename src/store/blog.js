@@ -9,7 +9,7 @@ const state = {
     ],
     true: true,
     sort: 'asc',
-    lastVisibleBlog: null,
+    lastVisibleBlog: '',
     noMorePosts: false,
 }
 const getters = {
@@ -56,18 +56,25 @@ const mutations = {
     }
 }
 const actions = {
-    getBlogs({ commit, state }, ) {
-    db.collection('blog').limit(1).get()
-    .then(snapshot => {
-        var blogInfo = []
-        var lastVisibleBlog = snapshot.docs[snapshot.docs.length-1];
-      snapshot.forEach(doc => {
-        blogInfo.push({...doc.data(), id:doc.id})
-      })
-      commit('setBlogInfo', blogInfo)
-      commit('setLastVisibleBlog', lastVisibleBlog);
-    })
- },
+ loadMore({state, commit}) {
+    db.collection("blog")
+      .orderBy('title', 'asc')
+      .startAfter(state.lastVisibleBlog)
+      .limit(1)
+      .get()
+      .then(snapshot => {
+        var blogInfo = [];
+        var lastVisibleBlog = snapshot.docs[snapshot.docs.length - 1];
+        snapshot.forEach(doc => {
+          blogInfo.push({...doc.data(), id:doc.id});
+        })
+        if(snapshot.docs.length === 0) {
+           commit('setNoMorePosts', true)
+        }
+        commit("setBlogInfo", blogInfo);
+        commit("setLastVisibleBlog", lastVisibleBlog);
+      });
+},
  getSinglePost({ commit }, payload) {
      db.collection('blog')
      .where(firebase.firestore.FieldPath.documentId(), '==', payload).get()
@@ -87,10 +94,10 @@ const actions = {
         url: payload.post.url,
         date: payload.post.date,
         category: payload.post.category,
-        published: payload.post.publish
+        published: payload.post.published
      })
      .then(function() {
-         dispatch('getBlogs')
+         dispatch('loadMore')
      })
     commit('setTrue', false)
 }

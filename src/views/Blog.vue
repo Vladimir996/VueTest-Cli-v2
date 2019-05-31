@@ -59,16 +59,15 @@
               <router-link class="img-blog" :to="{ path: 'blog/singlepost/' + post.id}">
              <img :src="post.url" class="img-blog" :to="{ path: 'blog/singlepost/' + post.id}">
             </router-link>
-              <p v-html="post.text.substring(0,120)+'...'"></p>
+              <p v-html="post.text.substring(0,250)+'...'"></p>
               <!-- <p> {{ post.text | truncate(100) }} </p> -->
             </div>
             <div class="date-published">
             <div class="formatDate">
-              <!-- <p>{{ formatDate(post.date) }}</p> -->
             <time :datetime="post.date">{{ post.date.toDate() | formatDate }}</time>
             </div>
             <div class="published-blog">
-               <p v-if="post.published == true">Published</p>
+               <!-- <p v-if="post.published == true">Published</p> -->
                  <p  v-if="post.published == false">Unpublished</p>
             </div>
             </div>
@@ -137,10 +136,15 @@ export default {
     },
   },
   created() {
-    this.$store.dispatch("getBlogs");
+    // this.$store.commit('setEmtpyBlog');
+    // this.$store.dispatch("getBlogs");
+    this.$store.dispatch('loadMore');
   },
   beforeDestroy() {
     this.$store.commit('setEmtpyBlog');
+
+    this.$store.commit('setLastVisibleBlog', '');
+    
    },
   methods: {
     deletePost(id, title) {
@@ -155,23 +159,7 @@ export default {
       this.$store.dispatch('getBlogs')
     },
     loadMore() {
-     db.collection("blog")
-      //  .orderBy('date', this.$store.state.sort)
-       .startAfter(this.lastVisibleBlog)
-       .limit(1)
-       .get()
-       .then(snapshot => {
-         var blogInfo = [];
-         var lastVisibleBlog = snapshot.docs[snapshot.docs.length - 1];
-         snapshot.forEach(doc => {
-           blogInfo.push({...doc.data(), id:doc.id});
-         })
-         if(snapshot.docs.length === 0) {
-             this.$store.commit('setNoMorePosts', true)
-         }
-         this.$store.commit("setBlogInfo", blogInfo);
-         this.$store.commit("setLastVisibleBlog", lastVisibleBlog);
-       });
+     this.$store.dispatch('loadMore');
     }
   }
 }

@@ -13,12 +13,12 @@
                 <p class="text-post text-center" v-html="currentUser.biography"></p>
                 <div class="line-blog"></div>
                 <div v-if="userPosts">
-                <!-- <router-link class="title-btn" :to="{ path: 'blog/singlepost/' + userPosts[0].id}"> -->
-                <!-- <h3>{{ userPosts[0].title }}</h3> -->
+                <router-link class="title-btn" :to="{ path: 'blog/singlepost/' + userPosts[0].id}">
+                <h3>{{ userPosts[0].title }}</h3>
                 </router-link>
             <div class="post-blog">
-               <!-- <router-link class="img-blog" :to="{ path: 'blog/singlepost/' +  userPosts[0].id}"> -->
-                 <!-- <img :src="userPosts[0].url" class="img-blog" :to="{ path: 'blog/singlepost/' +  userPosts[0].id}"> -->
+               <router-link class="img-blog" :to="{ path: 'blog/singlepost/' +  userPosts[0].id}">
+                 <img :src="userPosts[0].url" class="img-blog" :to="{ path: 'blog/singlepost/' +  userPosts[0].id}">
                </router-link>
                 <p v-html="userPosts[0].text.substring(0,700)+'...'"> </p>
             </div>

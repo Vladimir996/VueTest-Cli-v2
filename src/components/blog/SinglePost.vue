@@ -10,8 +10,12 @@
         </div>
         <h3 class="titlee-post">{{ singlePost[0].title }}</h3>
         <div class="formatSingle">
-          <p>{{ formatDate(singlePost[0].date) }}</p>
+            <time :datetime="singlePost[0].date">{{ singlePost[0].date.toDate() | formatDate }}</time>
         </div>
+         <div class="published-single">
+               <!-- <p v-if="singlePost[0].published == true">Published</p> -->
+                 <p  v-if="singlePost[0].published == false">Unpublished</p>
+            </div>
         <div class="line-blog"></div>
         <img class="urll-post" :src="singlePost[0].url">
         <p class="textt-post" v-html="singlePost[0].text"></p>
@@ -39,6 +43,11 @@ export default {
     setTimeout(() => {
       next();
     }, 400);
+  },
+  filters: {
+    formatDate(date) {
+    return moment(date).format("DD/MM/YYYY");
+    }
   },
   computed: {
     singlePost() {
@@ -86,7 +95,8 @@ export default {
   margin-left: 10px;
   margin-bottom: -6px;
 }
-.formatSingle {
-
+.published-single {
+  color: rgb(247, 38, 38);
+  font-weight: 700;
 }
 </style>

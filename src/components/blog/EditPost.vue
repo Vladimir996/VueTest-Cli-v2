@@ -88,7 +88,7 @@ export default {
             url: this.singlePost[0].url,
             category: this.category,
             published: this.publish,
-             date: date2,
+            date: date2,
           }
         })
         .then(this.$router.push("/blog"));
