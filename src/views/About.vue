@@ -1,10 +1,6 @@
 <template>
   <div >
-    <div class="page-title">
-      <div class="container">
-        <h3 v-if="aboutInfo">{{ aboutInfo[0].hederText }}</h3>
-      </div>
-    </div>
+    <Banner :bannerText="bannerText"/>
     <div class="container main-about" >
       <img  class="float-left"  :src="aboutInfo[0].photoAbout">
       <p>{{ aboutInfo[0].paragraph }}</p>
@@ -49,10 +45,14 @@
 </template>
 <script>
 import db from '@/firebase/init'
-
+import Banner from "../components/shared/Banner";
 export default {
+  components: {
+    Banner
+  },
   data() {
     return {
+      bannerText: "ABOUT MY BUSINESS",
       currentTab: 1,
       tabs: [
         {
@@ -101,15 +101,7 @@ export default {
   font-size: 14px;
   margin-left: 410px;
 }
-.page-title {
-  background-color: #2ecc71;
-}
-.page-title h3 {
-  color: white;
-  padding: 30px 0px;
-}
 .photo-about {
- 
   display: flex;
 }
 .mission-statement {

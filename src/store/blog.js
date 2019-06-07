@@ -48,7 +48,7 @@ const mutations = {
     setLastVisibleBlog(state, payload) {
         state.lastVisibleBlog = payload 
     },
-    setEmtpyBlog(state) {
+    setEmptyBlog(state) {
         state.blogInfo = []
     },
     setNoMorePosts(state, payload) {
@@ -56,25 +56,25 @@ const mutations = {
     }
 }
 const actions = {
- loadMore({state, commit}) {
-    db.collection("blog")
-      .orderBy('title', 'asc')
-      .startAfter(state.lastVisibleBlog)
-      .limit(1)
-      .get()
-      .then(snapshot => {
-        var blogInfo = [];
-        var lastVisibleBlog = snapshot.docs[snapshot.docs.length - 1];
-        snapshot.forEach(doc => {
-          blogInfo.push({...doc.data(), id:doc.id});
-        })
-        if(snapshot.docs.length === 0) {
-           commit('setNoMorePosts', true)
-        }
-        commit("setBlogInfo", blogInfo);
-        commit("setLastVisibleBlog", lastVisibleBlog);
-      });
-},
+    loadMore({state, commit}) {
+        db.collection("blog")
+          .orderBy('title', 'asc')
+          .startAfter(state.lastVisibleBlog)
+          .limit(1)
+          .get()
+          .then(snapshot => {
+            var blogInfo = [];
+            var lastVisibleBlog = snapshot.docs[snapshot.docs.length - 1];
+            snapshot.forEach(doc => {
+              blogInfo.push({...doc.data(), id:doc.id});
+            })
+            if(snapshot.docs.length === 0) {
+               commit('setNoMorePosts', true)
+            }
+            commit("setBlogInfo", blogInfo);
+            commit("setLastVisibleBlog", lastVisibleBlog);
+          });
+     },
  getSinglePost({ commit }, payload) {
      db.collection('blog')
      .where(firebase.firestore.FieldPath.documentId(), '==', payload).get()
@@ -97,10 +97,22 @@ const actions = {
         published: payload.post.published
      })
      .then(function() {
-         dispatch('loadMore')
+        dispatch('loadMore')
      })
     commit('setTrue', false)
-}
+},
+ filterCategory({commit}, payload) {
+    db.collection('blog')
+    .where('category', '==', payload).get()
+    .then(snapshot => {
+        var blogInfo = [];
+        snapshot.forEach(doc => {
+          blogInfo.push({...doc.data(), id:doc.id});
+        }) 
+        commit("setEmptyBlog")
+        commit("setBlogInfo", blogInfo);
+      });
+ }
 }
 export default {
     state,

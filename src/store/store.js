@@ -9,6 +9,7 @@ import header from './header.js';
 import footer from './footer.js';
 import authentication from './authentication.js'
 import blog from './blog.js'
+import admin from './admin.js'
 import user from './user.js'
 
 Vue.use(Vuex);
@@ -23,6 +24,7 @@ export const store = new Vuex.Store({
        footer,
        authentication,
        blog,
+       admin,
        user
    }
 });

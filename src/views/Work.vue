@@ -1,10 +1,12 @@
 <template>
   <div>
-    <div class="check-work">
-      <div class="container">
-        <h3>CHECK OUT WHAT I CAN DO</h3>
-      </div>
-    </div>
+    <!-- <div class="check-work"> -->
+      <!-- <div class="container"> -->
+        <!-- <h3>CHECK OUT WHAT I CAN DO</h3> -->
+        <!-- <h3>{{ text }}</h3> -->
+      <!-- </div> -->
+    <!-- </div> -->
+    <Banner :bannerText="bannerText"/>
     <div class="filter">
       <a
         @click.prevent="selectedCategory ='all'"
@@ -50,12 +52,17 @@
 </template>
 
 <script>
+import Banner from "../components/shared/Banner";
 import db from '@/firebase/init'
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
 export default {
+  components: {
+    Banner
+  },
   data() {
     return {
+      bannerText: 'CHECK OUT WHAT I CAN DO',
       activeClass: "grid",
       selectedCategory: "all",
     }
@@ -110,19 +117,7 @@ export default {
 }
 </script>
 <style>
-.check-work {
-  width: 100%;
-  height: 100px;
-  background-color: #2ecc71;
-}
-.check-work h3 {
-  width: 420px;
-  height: 23px;
-  color: white;
-  padding-top: 30px;
-  font-size: 28px;
-  font-weight: 500;
-}
+
 .filter {
   display: flex;
   list-style-type: none;

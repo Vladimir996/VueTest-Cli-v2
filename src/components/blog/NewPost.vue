@@ -14,10 +14,10 @@
         <p>{{ date | formatDate }}</p>
         <p class="category">Category</p>
         <select class="selectpicker" data-style="btn-info" v-model="category">
-          <option>NATURE</option>
-          <option>ART</option>
-          <option>HISTORY</option>
-          <option>TECHNOLOGY</option>
+          <option>nature</option>
+          <option>art</option>
+          <option>history</option>
+          <option>technology</option>
         </select>
         <div class="form-check">
           <input class="form-check-input" type="checkbox" v-model="publish" value id="defaultCheck1">

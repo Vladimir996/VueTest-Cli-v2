@@ -1,7 +1,8 @@
 <template>
   <header>
     <div class="header container">    
-       <img id="logo" :src="headerInfo[0].logoUrl">
+       <!-- <img id="logo" :src="headerInfo[0].logoUrl"> -->
+       <img v-if="adminInfo" id="logo" :src="adminInfo[0].logo">
       <div class="media-wide">
         <a v-for="(socialIcon, index) in socialIcons" :key="index" :href="socialIcon.url">
           <img :src="socialIcon.imgUrl">
@@ -27,6 +28,9 @@
       </li>
        <li class="nav-item">
        <router-link to="/blog" exact>BLOG</router-link>
+      </li>
+       <li class="nav-item">
+       <router-link to="/admin" exact>ADMIN</router-link>
       </li>
       <li class="nav-item">
        <router-link to="/login" exact>LOG IN</router-link>
@@ -65,7 +69,9 @@
       <li class="nav-item">
        <router-link to="/blog" exact>BLOG</router-link>
       </li>
-       
+      <li class="nav-item">
+       <router-link v-if="currentUser" to="/admin" exact>ADMIN</router-link>
+      </li>
     </ul>
     </div>
     <div>
@@ -82,8 +88,8 @@
       <li v-if="!currentUser" class="nav-item">
        <router-link class="sign-profile" to="/signup" exact>SIGN UP</router-link>
       </li>
-      <li class="nav-item">
-        <a v-if="currentUser" class="logout-profile" @click="logout" :class="{ logout: user }" >LOGOUT</a>
+      <li v-if="currentUser" class="nav-item">
+        <a @click="logout" :class="{ logout: user }" >LOGOUT</a>
       </li>
     </ul>
     </div>
@@ -98,7 +104,8 @@ import 'firebase/auth';
 export default {
   data() {
     return {
-      homePhoto: ''
+      homePhoto: '',
+      logo: null
     };
   },
   computed: {
@@ -116,7 +123,10 @@ export default {
        },
     currentUser() {
          return this.$store.getters.currentUser;
-       }
+       },
+    adminInfo() {
+      return this.$store.getters.adminInfo;
+    }
   },
   created() {
     db.collection("social-links").onSnapshot(snapshot => {
@@ -126,14 +136,14 @@ export default {
       });
       this.$store.commit("setSocialIcons", socialIcons);
     });
-    db.collection("logo")
+    db.collection("admin")
       .get()
       .then(snapshot => {
-        const headerInfo = [];
+        const adminInfo = [];
         snapshot.forEach(doc => {
-          headerInfo.push(doc.data());
+          adminInfo.push(doc.data());
         });
-        this.$store.commit("setHeaderInfo", headerInfo);
+        this.$store.commit("setAdminInfo", adminInfo);
       });
        db.collection('user').get()
       .then(snapshot => {
@@ -203,7 +213,7 @@ export default {
 }
 .nav-item span {
   margin-left: 20px;
-  margin-right: 250px;
+  margin-right: 220px;
   cursor: pointer;
 }
 </style>

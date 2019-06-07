@@ -1,8 +1,9 @@
 <template>
   <div>
-    <div id="blog-green">
+    <!-- <div id="blog-green">
         <p>BLOG</p>
-    </div>
+    </div> -->
+    <Banner :bannerText="bannerText"/>
     <div class="container-blog">
     <div class="filter-blog">
       <a
@@ -10,20 +11,20 @@
         :class="{ activeClasss: selectedCategory == 'all' }"
       >All /</a>
       <a
-        @click.prevent="selectedCategory ='NATURE'"
-        :class="{ activeClasss: selectedCategory == 'NATURE' }"
+        @click.prevent="selectedCategory ='nature'"
+        :class="{ activeClasss: selectedCategory == 'nature' }"
       >NATURE /</a>
       <a
-        @click.prevent="selectedCategory = 'ART'"
-        :class="{ activeClasss: selectedCategory == 'ART' }"
+        @click.prevent="selectedCategory = 'art'"
+        :class="{ activeClasss: selectedCategory == 'art' }"
       >ART /</a>
       <a
-        @click.prevent="selectedCategory = 'HISTORY'"
-        :class="{ activeClasss: selectedCategory == 'HISTORY' }"
+        @click.prevent="selectedCategory = 'history'"
+        :class="{ activeClasss: selectedCategory == 'history' }"
       >HISTORY /</a>
       <a
-        @click.prevent="selectedCategory = 'TECHNOLOGY'"
-        :class="{ activeClasss: selectedCategory == 'TECHNOLOGY' }"
+        @click.prevent="selectedCategory = 'technology'"
+        :class="{ activeClasss: selectedCategory == 'technology' }"
       >TECHNOLOGY</a>
       <div class="button-image">
         <router-link
@@ -38,7 +39,7 @@
     </div>
       <div v-if="blogInfo">
         <button @click="sort"><img class="sort-btn" src="https://img.icons8.com/color/48/000000/sorting-arrows.png"></button>
-        <div v-for="post in blogInfo" :key="post.id" class="z-hovr">
+        <div v-for="(post, index) in blogInfo" :key="index" class="z-hovr">
           <button
             type="button"
             class="close"
@@ -59,7 +60,7 @@
               <router-link class="img-blog" :to="{ path: 'blog/singlepost/' + post.id}">
              <img :src="post.url" class="img-blog" :to="{ path: 'blog/singlepost/' + post.id}">
             </router-link>
-              <p v-html="post.text.substring(0,250)+'...'"></p>
+              <p v-html="post.text.substring(0,120)+'...'"></p>
               <!-- <p> {{ post.text | truncate(100) }} </p> -->
             </div>
             <div class="date-published">
@@ -96,17 +97,20 @@
 import db from "@/firebase/init";
 import { setTimeout } from "timers";
 import Prompt from "../components/shared/Prompt.vue";
+import Banner from "../components/shared/Banner";
 import moment from "moment";
 export default {
+  components: {
+    Prompt,
+    Banner
+  },
   data() {
     return {
       blogTitle: "",
       id: "",
       selectedCategory: "all",
+      bannerText: "BLOG",
     };
-  },
-  components: {
-    Prompt
   },
   filters: {
     formatDate(date) {
@@ -115,12 +119,7 @@ export default {
   },
   computed: {
     blogInfo() {
-      if (this.selectedCategory === "all") {
       return this.$store.getters.blogInfo;
-      }
-      return this.$store.getters.blogInfo.filter(
-        blog => blog.category === this.selectedCategory
-      );
     },
     lastVisibleBlog() {
        return this.$store.getters.getLastVisibleBlog;
@@ -135,28 +134,34 @@ export default {
      return this.$store.getters.noMorePosts;
     },
   },
+  watch: {
+    selectedCategory() {
+      if(this.selectedCategory === 'all') { 
+        return 
+      } else {
+        this.$store.dispatch('filterCategory', this.selectedCategory);
+      }
+    }
+  },
   created() {
-    // this.$store.commit('setEmtpyBlog');
-    // this.$store.dispatch("getBlogs");
     this.$store.dispatch('loadMore');
   },
   beforeDestroy() {
     this.$store.commit('setEmtpyBlog');
 
     this.$store.commit('setLastVisibleBlog', '');
-    
    },
   methods: {
     deletePost(id, title) {
       this.id = id;
       this.blogTitle = title;
     },
-    formatDate(date) {
+    formatDate2(date) {
       return moment(date).format("DD/MM/YYYY");
     },
     sort(){
       this.$store.commit('setSort')
-      this.$store.dispatch('getBlogs')
+      this.$store.dispatch('loadMore')
     },
     loadMore() {
      this.$store.dispatch('loadMore');

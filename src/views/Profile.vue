@@ -12,16 +12,14 @@
                 <h3 class="biography-profile">Biography</h3>
                 <p class="text-post text-center" v-html="currentUser.biography"></p>
                 <div class="line-blog"></div>
-                <div v-if="userPosts">
-                <router-link class="title-btn" :to="{ path: 'blog/singlepost/' + userPosts[0].id}">
+                <router-link class="title-btn" :to="{ path: '/blog/singlepost/' + userPosts[0].id}">
                 <h3>{{ userPosts[0].title }}</h3>
                 </router-link>
             <div class="post-blog">
-               <router-link class="img-blog" :to="{ path: 'blog/singlepost/' +  userPosts[0].id}">
-                 <img :src="userPosts[0].url" class="img-blog" :to="{ path: 'blog/singlepost/' +  userPosts[0].id}">
+               <router-link class="img-blog" :to="{ path: '/blog/singlepost/' +  userPosts[0].id}">
+                 <img :src="userPosts[0].url" class="img-blog">
                </router-link>
-                <p v-html="userPosts[0].text.substring(0,700)+'...'"> </p>
-            </div>
+                <p v-html="userPosts[0].text.substring(0,550)+'...'"> </p>
             </div>
         </div> 
    </div>
@@ -37,22 +35,23 @@ export default {
        }
    },
     computed:{
+      blogInfo() {
+         return this.$store.getters.blogInfo;
+      },
       currentUser(){
          return this.$store.getters.currentUser;
-       },
-       singleUser() {
-			return this.$store.getters['singleUser'];
-        },
-        userPosts() {
-			return this.$store.getters['userPosts'];
-        },
+      },
+      singleUser() {
+			   return this.$store.getters['singleUser'];
+      },
+      userPosts() {
+			   return this.$store.getters['userPosts'];
+      },
    },
-   created() {
-},
   methods: {
-editProfile() {
-    this.$router.push('/profiledata')
-  }
+     editProfile() {
+        this.$router.push('/profiledata')
+     }
   }
 }
 </script>

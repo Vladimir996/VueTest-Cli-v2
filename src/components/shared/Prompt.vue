@@ -29,12 +29,19 @@
 import db from '@/firebase/init'
 export default {
     props:  ['title', 'id'],
+    computed: {
+      blogInfo() {
+      return this.$store.getters.blogInfo;
+    },
+    },
    methods: {
        confirm() {
          db.collection("blog").doc(this.id).delete();   
           this.$store.dispatch('loadMore'); 
            $('#deleteBlog').modal('hide');
-           this.$router.push('/blog')   
+          var articleForRemoval = this.blogInfo.find(post => post.id === this.id);
+          var id = this.blogInfo.indexOf(articleForRemoval);
+           this.blogInfo.splice(id, 1);
        }
    }
 };

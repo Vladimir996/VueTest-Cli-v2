@@ -1,10 +1,6 @@
 <template>
     <div>
-             <div class="question">
-                  <div class="container">
-                        <h3 v-if="contactInfo">{{ contactInfo[0].contactTitle }}</h3>
-                  </div>
-             </div>
+             <Banner :bannerText="bannerText"/>
              <div class="maps">
              <iframe :src="contactInfo[0].map"></iframe>
              </div>
@@ -47,9 +43,16 @@
 <script>
 import db from '@/firebase/init'
 import ContactForm from "../components/contact/ContactForm.vue";
+import Banner from "../components/shared/Banner";
 export default {
  components: {
-    ContactForm
+    ContactForm,
+    Banner
+  },
+  data() {
+    return {
+      bannerText: 'GOT A QUESTION OR INQUIRY?',
+    }
   },
   computed: {
      contactInfo() {

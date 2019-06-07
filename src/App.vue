@@ -52,6 +52,8 @@ export default {
 }
 #logo {
   margin-top: 20px;
+  width: 120px;
+  height: 40px;
 }
 #line {
   display: block;
